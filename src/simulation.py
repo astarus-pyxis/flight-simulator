@@ -4,7 +4,11 @@ Flight simulation inspired by the crash of the flight AP603.
 Pilots of the flight AP630 were not able to control the plane because a technician forgot to remove covers on pressure sensors and crash the plane.
 In this simulation, alarms start to ring 30 seconds after the start of the simulation and the on board computer will start to give wrong altitude and speed values after 45 seconds.
 
-Author: Florian Topeza, ISAE-SUPAERO, 2024
+Authors: 
+- Florian Topeza, 
+- Arthur Jolivet
+
+ISAE-SUPAERO, 2024
 
 """
 
@@ -15,19 +19,19 @@ import time
 import random as rd
 from tkinter import messagebox
 
-# Initialising plane variables
+# Initializing plane variables
 pitch = 0
 roll = 0
 yaw = 0
 speed = 200
 altitude = 3000
 
-# Initialiting plane alarms
+# Initializing plane alarms
 stall = False
 too_low = False
 wrong_altitude_and_speed_initiated = False
 
-# Initialiting simulation variables
+# Initializing simulation variables
 start_time = 0
 start = False
 
