@@ -126,6 +126,8 @@ def update_heading(dt):
     global heading
     heading += dt * STATIC_MARGIN * math.sin(roll) * lift
 
+## General update function
+
 def update(dt): #dt is supposed to be small
     update_rho()
     update_speed()
@@ -166,73 +168,73 @@ import matplotlib.pyplot as plt
 # plt.plot(alpha, d)
 # plt.show()
 
-# Simulation
+# # Simulation
 
-duration = 6000
-dt = 0.1
+# duration = 6000
+# dt = 0.1
 
-time = [i*dt for i in range(int(duration/dt))]
-altitude_r = []
-speed_r = []
-thrust_r = []
-vz_r = []
-vx_r = []
-aoa_r = []
-slope_r = []
-cl_r = []
-cd_r = []
-lift_r = []
-drag_r = []
-for t in time:
-    update(dt)
-    altitude_r.append(altitude)
-    speed_r.append(speed)
-    thrust_r.append(thrust)
-    vz_r.append(vz)
-    vx_r.append(vx)
-    aoa_r.append(aoa)
-    slope_r.append(slope)
-    cl_r.append(cl)
-    cd_r.append(cd)
-    lift_r.append(lift)
-    drag_r.append(drag)
+# time = [i*dt for i in range(int(duration/dt))]
+# altitude_r = []
+# speed_r = []
+# thrust_r = []
+# vz_r = []
+# vx_r = []
+# aoa_r = []
+# slope_r = []
+# cl_r = []
+# cd_r = []
+# lift_r = []
+# drag_r = []
+# for t in time:
+#     update(dt)
+#     altitude_r.append(altitude)
+#     speed_r.append(speed)
+#     thrust_r.append(thrust)
+#     vz_r.append(vz)
+#     vx_r.append(vx)
+#     aoa_r.append(aoa)
+#     slope_r.append(slope)
+#     cl_r.append(cl)
+#     cd_r.append(cd)
+#     lift_r.append(lift)
+#     drag_r.append(drag)
 
-print_index = 0
+# print_index = 0
 
-print("altitude", altitude_r[print_index])
-print("speed", speed_r[print_index])
-print("thrust", thrust_r[print_index])
-print("vz", vz_r[print_index])
-print("vx", vx_r[0])
-print("aoa", aoa_r[print_index])
-print("slope", slope_r[print_index])
-print("cl", cl_r[print_index])
-print("cd", cd_r[print_index])
-print("lift", lift_r[print_index])
-print("drag", drag_r[print_index])
+# print("altitude", altitude_r[print_index])
+# print("speed", speed_r[print_index])
+# print("thrust", thrust_r[print_index])
+# print("vz", vz_r[print_index])
+# print("vx", vx_r[0])
+# print("aoa", aoa_r[print_index])
+# print("slope", slope_r[print_index])
+# print("cl", cl_r[print_index])
+# print("cd", cd_r[print_index])
+# print("lift", lift_r[print_index])
+# print("drag", drag_r[print_index])
 
-start_,stop_ = 0,duration #175,175.7
-start,stop = int(start_/dt),int(stop_/dt)
+# start_,stop_ = 0,duration #175,175.7
+# start,stop = int(start_/dt),int(stop_/dt)
 
-plt.figure("altitude")
-plt.plot(time[start:stop],altitude_r[start:stop])
-plt.figure("speed")
-plt.plot(time[start:stop],speed_r[start:stop])
-plt.figure("thrust")
-plt.plot(time[start:stop],thrust_r[start:stop])
-plt.figure("vz")
-plt.plot(time[start:stop],vz_r[start:stop])
-plt.figure("vx")
-plt.plot(time[start:stop],vx_r[start:stop])
-plt.figure("angle of attack")
-plt.plot(time[start:stop],aoa_r[start:stop])
-plt.figure("slope")
-plt.plot(time[start:stop],slope_r[start:stop])
-plt.figure("cl, cd")
-plt.plot(time[start:stop], cl_r[start:stop])
-plt.plot(time[start:stop], cd_r[start:stop])
-plt.figure("lift")
-plt.plot(time[start:stop], lift_r[start:stop])
-plt.figure("drag")
-plt.plot(time[start:stop], drag_r[start:stop])
-plt.show()
+# plt.figure("altitude")
+# plt.plot(time[start:stop],altitude_r[start:stop])
+# plt.figure("speed")
+# plt.plot(time[start:stop],speed_r[start:stop])
+# plt.figure("thrust")
+# plt.plot(time[start:stop],thrust_r[start:stop])
+# plt.figure("vz")
+# plt.plot(time[start:stop],vz_r[start:stop])
+# plt.figure("vx")
+# plt.plot(time[start:stop],vx_r[start:stop])
+# plt.figure("angle of attack")
+# plt.plot(time[start:stop],aoa_r[start:stop])
+# plt.figure("slope")
+# plt.plot(time[start:stop],slope_r[start:stop])
+# plt.figure("cl, cd")
+# plt.plot(time[start:stop], cl_r[start:stop])
+# plt.plot(time[start:stop], cd_r[start:stop])
+# plt.figure("lift")
+# plt.plot(time[start:stop], lift_r[start:stop])
+# plt.figure("drag")
+# plt.plot(time[start:stop], drag_r[start:stop])
+# plt.show()
