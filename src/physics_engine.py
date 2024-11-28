@@ -18,15 +18,19 @@ STATIC_MARGIN = 0.05*5 # in meters
 ## Plane main variables
 
 pitch = 12 * math.pi/180 #radian
+pitch_deg = 12 # degrees
 roll = 0 #radian
-altitude = 0 #metres
+roll_deg = 0 #degrees
+altitude = 1000 #metres
+altitude_feet = 3000 #feet
 heading = 0 #radian
+heading_deg = 0 # degrees
 vz = 0 #(vertical speed, m/s)
 vx = 100 #(horizontal speed, m/s)
 throttle = 1 #Between 0 and 1
 
 ## Plane computed variables
-speed = 0
+speed = 100
 aoa = 0 #radian
 cl = 0 
 cd = 0 
@@ -37,12 +41,12 @@ slope = 0
 
 rho = 0
 
-def compute_rho(altitude):
-    return 352.995 * (1-0.0000225577*altitude)**5.25516 / (288.15 - 0.0065*altitude)
+def compute_rho(alt):
+    return 352.995 * (1-0.0000225577*alt)**5.25516 / (288.15 - 0.0065*alt)
 
-def update_rho():
+def update_rho(alt):
     global rho
-    rho = compute_rho(altitude)
+    rho = compute_rho(alt)
 
 def update_speed():
     global speed
@@ -74,7 +78,7 @@ def compute_cl(aoa):
         
     return 0
 
-def update_cl():
+def update_cl(aoa):
     global cl
     cl = compute_cl(aoa)
 
@@ -117,22 +121,38 @@ def update_altitude(dt):
     global altitude
     altitude += vz * dt
 
+def update_altitude_feet():
+    global altitude_feet
+    altitude_feet = int(3*altitude)
+
 def update_vx(dt):
     global vx
     horizontal_force = lift * -math.sin(slope) - drag * math.cos(slope) + thrust * math.cos(pitch)
     vx += horizontal_force * dt / MASS
 
 def update_heading(dt):
-    global heading
+    global heading, heading_deg
     heading += dt * STATIC_MARGIN * math.sin(roll) * lift
+    
+def heading_rad2deg():
+    global heading_deg
+    heading_deg = heading * 180 / math.pi
+
+def pitch_deg2rad():
+    global pitch
+    pitch = pitch_deg * math.pi / 180
+
+def roll_deg2rad():
+    global roll
+    roll = roll_deg * math.pi / 180
 
 ## General update function
 
-def update(dt): #dt is supposed to be small
-    update_rho()
+def update_all(dt, alt, aoa): #dt is supposed to be small
+    update_rho(alt)
     update_speed()
     update_aoa()
-    update_cl()
+    update_cl(aoa)
     update_cd()
     update_thrust()
     update_lift()
@@ -140,13 +160,14 @@ def update(dt): #dt is supposed to be small
     update_slope()
     update_vz(dt)
     update_altitude(dt)
+    update_altitude_feet()
     update_vx(dt)
     update_heading(dt)
 
 
 ## Tests
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 # # Cl Cd curves
 
@@ -186,7 +207,7 @@ import matplotlib.pyplot as plt
 # lift_r = []
 # drag_r = []
 # for t in time:
-#     update(dt)
+#     update_all(dt)
 #     altitude_r.append(altitude)
 #     speed_r.append(speed)
 #     thrust_r.append(thrust)
