@@ -256,7 +256,7 @@ def update():
 
 
 def too_low_warning():
-    if too_low and altitude_feet < 500:
+    if time.time() - start_time > 290:
         too_low_frame = tk.Frame(root)
         too_low_label = tk.Label(too_low_frame, text="TOO LOW TERRAIN, PULL UP !", font=("Arial", 16), fg="red")
         too_low_frame.pack(pady=20)
