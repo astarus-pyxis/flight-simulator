@@ -1,11 +1,9 @@
 """
 
-Flight simulation inspired by the crash of the flight AP603.
-Pilots of the flight AP603 were not able to control the plane because a technician forgot to remove covers on pressure sensors and crash the plane.
-In this simulation, alarms start to ring 60 seconds after the start of the simulation and the on board computer will start to give wrong altitude and speed values after 120 seconds.
+Flight simulation
 
 Authors: 
-- Florian Topeza, 
+- Florian Topeza 
 - Arthur Jolivet
 
 ISAE-SUPAERO, 2024
@@ -21,46 +19,49 @@ from tkinter import messagebox
 from physics_engine import *
 import math
 
+
+"""Physical model of the plane"""
+
 ## Environment constants
 
-G = 9.81
+G = 9.81 # m.s^(-2)
 
 ## Plane constants
 
-MASS = 100_000
+MASS = 100_000 # kg
 NB_ENGINES = 2
-ENGINE_THRUST = 180_000 # in N
-WING_SURFACE = 180
-STALL_ANGLE_DEG = 15
-STALL_ANGLE = STALL_ANGLE_DEG * math.pi/180
+ENGINE_THRUST = 180_000 # N
+WING_SURFACE = 180 # m^2
+STALL_ANGLE_DEG = 15 # deg
+STALL_ANGLE = STALL_ANGLE_DEG * math.pi/180 # rad
 CL_MAX = 1.3
-STATIC_MARGIN = 0.05*5 # in meters
+STATIC_MARGIN = 0.05*5 # m
 
 ## Plane main variables
 
-pitch = 5 * math.pi/180 #radian
-pitch_deg = 5 # degrees
-roll = 0 #radian
-roll_deg = 0 #degrees
-altitude = 1000 #metres
-altitude_feet = 3000 #feet
-heading = 0 #radian
-heading_deg = 0 # degrees
-vz = 0 #(vertical speed, m/s)
-vx = 100 #(horizontal speed, m/s)
-throttle = 0.5 #Between 0 and 1
+pitch = 5 * math.pi/180 #rad
+pitch_deg = 5 # deg
+roll = 0 #rad
+roll_deg = 0 #deg
+altitude = 1000 #m
+altitude_feet = 3000 #ft
+heading = 0 #rad
+heading_deg = 0 # deg
+vz = 0 # vertical speed, m.s^(-1)
+vx = 100 # horizontal speed, m.s^(-1)
+throttle = 0.5 # between 0 and 1
 
 ## Plane computed variables
 speed = 100
-aoa = 0 #radian
+aoa = 0 #rad
 cl = 0 
 cd = 0 
-thrust = 0
-lift = 0
-drag = 0
-slope = 0
+thrust = 0 # N
+lift = 0 # N
+drag = 0 # N
+slope = 0 # rad
 
-rho = 0
+rho = 0 # kg.m^(-3)
 
 def compute_rho(alt):
     return 352.995 * (1-0.0000225577*alt)**5.25516 / (288.15 - 0.0065*alt)
@@ -185,10 +186,15 @@ def update_all(dt, alt, aoa): #dt is supposed to be small
     update_vx(dt)
     update_heading(dt)
 
+
+"""Simulation model"""
+
 # Initializing plane alarms
 stall = False
 too_low = False
-wrong_altitude_and_speed_initiated = False
+
+too_low_time = 0
+stall_time = 0
 
 # Initializing simulation variables
 start_time = 0
@@ -205,35 +211,31 @@ def airplane_sound():
     airplane.play()
     root.after(60000, airplane_sound)
 
-too_low_time = 0
 
 # Function to manage the too low alarm
 def too_low_alarm():
     global too_low_time
-    if too_low:
+    if altitude_feet < 300 and vz < -10:
         too_low_dt = time.time() - too_low_time
         if too_low_dt > 2:
             too_low_time = time.time()
             alarm_too_low.play()
-        status_label.config(text="STALL & PUSH DOWN", fg="red")
-
-stall_time = 0
+        status_label.config(text="TOO LOW TERRAIN, PULL UP", fg="red")
 
 # Function to manage the stall alarm
 def stall_alarm():
     global stall_time
-    if (pitch_deg > STALL_ANGLE_DEG or pitch_deg < -STALL_ANGLE_DEG or roll_deg > 45 or roll_deg < -45 or speed < 50 or stall):
+    if (pitch_deg > STALL_ANGLE_DEG or pitch_deg < -STALL_ANGLE_DEG or roll_deg > 45 or roll_deg < -45 or (speed < 50 and altitude_feet > 300)):
         stall_time_dt = time.time() - stall_time
         if stall_time_dt > 1.8:
             stall_time = time.time()
             alarm_stall.play()
         if not too_low:
-            status_label.config(text="STALL", fg="red")
+            status_label.config(text="STALL, PUSH DOWN", fg="red")
     else:
         alarm_stall.stop()
         if not too_low:
             status_label.config(text="Flight is nominal", fg="white")
-
 
 # Function to update the simulation
 def update():
@@ -242,34 +244,8 @@ def update():
         update_all(dt, altitude, aoa)
         too_low_alarm()
         stall_alarm()
-        wrong_altitude_and_speed()
-        too_low_warning()
         update_labels()
-        elapsed_time = time.time() - start_time
-        if elapsed_time > 60:
-            stall = True
-        if elapsed_time > 120:
-            too_low = True
-        if elapsed_time > 300:
-            root.quit()
     root.after(100, update)
-
-
-def too_low_warning():
-    if time.time() - start_time > 290:
-        too_low_frame = tk.Frame(root)
-        too_low_label = tk.Label(too_low_frame, text="TOO LOW TERRAIN, PULL UP !", font=("Arial", 16), fg="red")
-        too_low_frame.pack(pady=20)
-        too_low_label.pack()
-
-# Function to manage the wrong altitude and speed
-def wrong_altitude_and_speed():
-    global altitude_feet, speed, wrong_altitude_and_speed_initiated
-    if too_low: 
-        delta_altitude = rd.randint(10, 40)
-        altitude_feet += delta_altitude
-        delta_speed = rd.randint(10, 20)
-        speed += delta_speed
 
 # Function to manage the key press
 def on_key_press(event):
@@ -309,6 +285,8 @@ def update_labels():
     altitude_label.config(text=f"Altitude: {altitude_feet}")
     speed_label.config(text=f"Speed: {speed}")
 
+
+"""Graphical interface"""
 
 # Creating the graphical interface
 root = tk.Tk()
@@ -353,6 +331,9 @@ speed_label.pack(pady=10)
 
 # Binding the key press event
 root.bind("<KeyPress>", on_key_press)
+
+
+"""Run simulation"""
 
 # Start the update function
 update()
