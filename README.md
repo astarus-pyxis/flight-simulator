@@ -8,14 +8,15 @@ Repository under MIT License
 
 +-src
 
- |  - flight simulation.py
+ |      - flight simulation.py
 
- |  - AP603_simulation.py
- |  - airplane.mp3
+ |      - AP603_simulation.py
 
- |  - stall_alarm.wav
+ |      - airplane.mp3
+
+ |      - stall_alarm.wav
  
- |  - too_low_alarm.wav  
+ |      - too_low_alarm.wav  
 
 This repository provides a basic flight simulator in the file flight_simulation.py. The code implements equations from flight mechanics and a graphic interface with sounds to simulate the cockpit of a commercial aircraft.
 
